@@ -44,6 +44,7 @@ if __name__ == "__main__":
             global text_action_to_take
 
             print ('cell_clicked', text_action_to_take)
+            print ('cell_clicked start', e.control.data)
 
             if text_action_to_take == 'No Action Set':
                 print ('No Action Set')
@@ -51,6 +52,7 @@ if __name__ == "__main__":
             elif text_action_to_take == 'Set Cell To':
                 e.control.content = ft.Text(next_cell_value)
                 e.control.data["cell_current_value"] = next_cell_value
+                e.control.data["cell_value_source"] = 'Set Cell To'
                 e.control.bgcolor="red"
                 page.update()
             
@@ -80,6 +82,8 @@ if __name__ == "__main__":
             
             else:
                 print (text_action_to_take, ' is not implimented', )
+            
+            print ('cell_clicked end  ', e.control.data)
 
         def value_clicked(e):
             global next_cell_value
@@ -279,6 +283,7 @@ if __name__ == "__main__":
                     cells_set.append([row, can_be_col, needs, can_be_cell])
                     cell_containers[can_be_cell].content = ft.Text(needs)
                     cell_containers[can_be_cell].data["cell_current_value"] = needs
+                    cell_containers[can_be_cell].data["cell_value_source"] = 'row_can_be'
                     cell_containers[can_be_cell].content.bgcolor="orange"
                     page.update()
                     print ('6a row_can_be ==>', row, col, needs, can_be_count)
@@ -361,6 +366,7 @@ if __name__ == "__main__":
                     cells_set.append([col, can_be_row, needs, can_be_cell])
                     cell_containers[can_be_cell].content = ft.Text(needs)
                     cell_containers[can_be_cell].data["cell_current_value"] = needs
+                    cell_containers[can_be_cell].data["cell_value_source"] = 'col_can_be'
                     cell_containers[can_be_cell].content.bgcolor="orange"
                     page.update()
                     print ('6a col_can_be ==>', row, col, needs, can_be_count)
@@ -442,6 +448,7 @@ if __name__ == "__main__":
                     cells_set.append([row, can_be_col, needs, can_be_cell])
                     cell_containers[can_be_cell].content = ft.Text(needs)
                     cell_containers[can_be_cell].data["cell_current_value"] = needs
+                    cell_containers[can_be_cell].data["cell_value_source"] = 'box_can_be'
                     cell_containers[can_be_cell].content.bgcolor="orange"
                     page.update()
                     print ('6a box_can_be ==>', row, col, needs, can_be_count)
@@ -493,6 +500,7 @@ if __name__ == "__main__":
                 cells_set.append([row, col, cell_can_be_values[0], cell])
                 cell_containers[cell].content = ft.Text(cell_can_be_values[0])
                 cell_containers[cell].data["cell_current_value"] = cell_can_be_values[0]
+                cell_containers[cell].data["cell_value_source"] = 'cell_can_be'
                 cell_containers[cell].content.bgcolor="blue"
                 page.update()
                 print ('cell_can_be ==>', row, col, cell_can_be_values)
@@ -502,6 +510,7 @@ if __name__ == "__main__":
                 show_can_be = ''.join(cell_can_be_values)
                 cell_containers[cell].content = ft.Text(show_can_be)
                 cell_containers[cell].data["cell_current_value"] = "__"
+                cell_containers[cell].data["cell_value_source"] = 'cell_can_be'
                 cell_containers[cell].content.bgcolor="red"
                 page.update()
                 print ('cell_can_be ==>', row, col, cell_can_be_values)
@@ -549,6 +558,7 @@ if __name__ == "__main__":
 
                 cell_containers[cell_index].content = ft.Text(text_new_value)
                 cell_containers[cell_index].data["cell_current_value"] = text_new_value
+                cell_containers[cell_index].data["cell_value_source"] = 'init'
                 cell_containers[cell_index].bgcolor="green"
 
                 page.update()
@@ -593,8 +603,6 @@ if __name__ == "__main__":
                 if row in (3,6,9):
                     page.add(ft.Divider(height=3,thickness=3,color='black'))
 
-            #page.add(ft.Row(controls=[action_to_take],ref=action_to_take,data=ft.Text('No Action Set')))
-            #page.add(ft.Row(controls=[new_cell_value],ref=new_cell_value,data=ft.Text('__')))
             this_row = []
             this_row.append(ft.Row(controls=[action_to_take],ref=action_to_take,data=ft.Text('No Action Set')))
             this_row.append(ft.Row(controls=[new_cell_value],ref=new_cell_value,data=ft.Text('__')))
