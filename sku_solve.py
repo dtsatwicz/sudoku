@@ -1,10 +1,9 @@
 
 import flet as ft
-import unittest
 
 cell_containers=[]
 import sudoku_util as su
-import sudoku_cells as sc
+import sudoku_x2 as x2
 
 if __name__ == "__main__":
 
@@ -18,23 +17,20 @@ if __name__ == "__main__":
         page.window_width=360
         text_action_to_take = 'No Action Set'
 
-        class TestSudoku(unittest.TestCase):
-                def test_cells_in_row(self):
-                    self.assertEqual(su.cells_in_row(1), [0,1,2,3,4,5,6,7,8], \
-                      " should be [0,1,2,3,4,5,6,7,8]"
-                     )
-
-                def test_cells_in_col(self):
-                    self.assertEqual(su.cells_in_col(1), [0, 9,18,27,36,45,54,63,72], \
-                       " should be [0, 9,18,27,36,45,54,63,72]"
-                     )
-
         result = ft.Text(value='0')
         new_cell_value = ft.Text(value='0')
         text_action_to_take = 'No Action Set'
         action_to_take = ft.Text(value=text_action_to_take)
         next_cell_value = '0'
         new_value = ''
+
+        def values_in_cells(cells,cell_containers):
+            values = []
+            for cell in cells:
+                cell_current_value = cell_containers[cell].data["current_value"]
+                if cell_current_value != "__":
+                    values.append(cell_current_value)
+            return values
 
     
         def cell_clicked(e):
@@ -51,28 +47,28 @@ if __name__ == "__main__":
             
             elif text_action_to_take == 'Set Cell To':
                 e.control.content = ft.Text(next_cell_value)
-                e.control.data["cell_current_value"] = next_cell_value
-                e.control.data["cell_value_source"] = 'Set Cell To'
+                e.control.data["current_value"] = next_cell_value
+                e.control.data["value_source"] = 'Set Cell To'
                 e.control.bgcolor="red"
                 page.update()
             
             elif text_action_to_take == 'Run Row Can Be':
-                row = e.control.data["cell_row"]
+                row = e.control.data["row"]
                 cells_set = row_can_be(row,cell_containers)
                 page.update()
             
             elif text_action_to_take == 'Run Col Can Be':
-                col = e.control.data["cell_col"]
+                col = e.control.data["col"]
                 cells_set = col_can_be(col,cell_containers)
                 page.update()
             
             elif text_action_to_take == 'Run Box Can Be':
-                box = e.control.data["cell_box"]
+                box = e.control.data["box"]
                 cells_set = box_can_be(box,cell_containers)
                 page.update()
             
             elif text_action_to_take == 'Run Cell Can Be':
-                cell = e.control.data["cell_index"]
+                cell = e.control.data["index"]
                 cells_set = cell_can_be(cell,cell_containers)
                 page.update()
             
@@ -234,7 +230,7 @@ if __name__ == "__main__":
             row_needs = su.sudoku_values()
             row_cells = su.cells_in_row(row)
             for row_cell in row_cells:
-                cell_current_value = cell_containers[row_cell].data["cell_current_value"]
+                cell_current_value = cell_containers[row_cell].data["current_value"]
                 if cell_current_value != "__":
                     row_needs.remove (cell_current_value)
             print (' 2 row_can_be', row, 'row_needs ', row_needs)
@@ -249,8 +245,8 @@ if __name__ == "__main__":
 
                 for col_cell in su.cells_in_row(row):
                     if can_be_count <= 1:
-                        cell_current_value = cell_containers[col_cell].data["cell_current_value"]
-                        col = cell_containers[col_cell].data["cell_col"]
+                        cell_current_value = cell_containers[col_cell].data["current_value"]
+                        col = cell_containers[col_cell].data["col"]
             
                         print ('3b row_can_be row, col ', row, col, needs, can_be_count,  cell_current_value)
 
@@ -259,7 +255,7 @@ if __name__ == "__main__":
                                    row, col, needs, can_be_count,  cell_current_value)
 
                             col_cells = su.cells_in_col(col)
-                            col_values = sc.values_in_cells(col_cells,cell_containers)
+                            col_values = values_in_cells(col_cells,cell_containers)
                             cannot_reason = ''
                             if needs in col_values:
                                 can_be = False
@@ -269,7 +265,7 @@ if __name__ == "__main__":
                             else:
                                 box =  su.box_of(row, col)
                                 box_cells = su.cells_in_box(box)
-                                box_values = sc.values_in_cells(box_cells,cell_containers)
+                                box_values = values_in_cells(box_cells,cell_containers)
 
                                 if needs in box_values:
                                     can_be = False
@@ -287,8 +283,8 @@ if __name__ == "__main__":
                 if can_be_count == 1:
                     cells_set.append([row, can_be_col, needs, can_be_cell])
                     cell_containers[can_be_cell].content = ft.Text(needs)
-                    cell_containers[can_be_cell].data["cell_current_value"] = needs
-                    cell_containers[can_be_cell].data["cell_value_source"] = 'row_can_be'
+                    cell_containers[can_be_cell].data["current_value"] = needs
+                    cell_containers[can_be_cell].data["value_source"] = 'row_can_be'
                     cell_containers[can_be_cell].content.bgcolor="orange"
                     page.update()
                     print ('6a row_can_be ==>', row, col, needs, can_be_count)
@@ -311,13 +307,13 @@ if __name__ == "__main__":
 
             cells_set = []
 
-            ##col = data["cell_col"]
+            ##col = data["col"]
             print (' 1 col_can_be', col)
 
             col_needs = su.sudoku_values()
             col_cells = su.cells_in_col(col)
             for col_cell in col_cells:
-                cell_current_value = cell_containers[col_cell].data["cell_current_value"]
+                cell_current_value = cell_containers[col_cell].data["current_value"]
                 if cell_current_value != "__":
                     col_needs.remove (cell_current_value)
             print (' 2 col_can_be', col, 'col_needs ', col_needs)
@@ -332,8 +328,8 @@ if __name__ == "__main__":
 
                 for row_cell in su.cells_in_col(col):
                     if can_be_count <= 1:
-                        cell_current_value = cell_containers[row_cell].data["cell_current_value"]
-                        row = cell_containers[row_cell].data["cell_row"]
+                        cell_current_value = cell_containers[row_cell].data["current_value"]
+                        row = cell_containers[row_cell].data["row"]
             
                         print ('3b col_can_be row, col ', row, col, needs, can_be_count,  cell_current_value)
 
@@ -342,7 +338,7 @@ if __name__ == "__main__":
                                    row, col, needs, can_be_count,  cell_current_value)
 
                             row_cells = su.cells_in_row(row)
-                            row_values = sc.values_in_cells(row_cells,cell_containers)
+                            row_values = values_in_cells(row_cells,cell_containers)
                             cannot_reason = ''
                             if needs in row_values:
                                 can_be = False
@@ -352,7 +348,7 @@ if __name__ == "__main__":
                             else:
                                 box =  su.box_of(row, col)
                                 box_cells = su.cells_in_box(box)
-                                box_values = sc.values_in_cells(box_cells,cell_containers)
+                                box_values = values_in_cells(box_cells,cell_containers)
 
                                 if needs in box_values:
                                     can_be = False
@@ -370,8 +366,8 @@ if __name__ == "__main__":
                 if can_be_count == 1:
                     cells_set.append([col, can_be_row, needs, can_be_cell])
                     cell_containers[can_be_cell].content = ft.Text(needs)
-                    cell_containers[can_be_cell].data["cell_current_value"] = needs
-                    cell_containers[can_be_cell].data["cell_value_source"] = 'col_can_be'
+                    cell_containers[can_be_cell].data["current_value"] = needs
+                    cell_containers[can_be_cell].data["value_source"] = 'col_can_be'
                     cell_containers[can_be_cell].content.bgcolor="orange"
                     page.update()
                     print ('6a col_can_be ==>', row, col, needs, can_be_count)
@@ -399,7 +395,7 @@ if __name__ == "__main__":
             box_needs = su.sudoku_values()
             box_cells = su.cells_in_box(box)
             for box_cell in box_cells:
-                cell_current_value = cell_containers[box_cell].data["cell_current_value"]
+                cell_current_value = cell_containers[box_cell].data["current_value"]
                 if cell_current_value != "__":
                     box_needs.remove (cell_current_value)
             print (' 2 box_can_be', box, 'box_needs ', box_needs)
@@ -415,16 +411,16 @@ if __name__ == "__main__":
 
                 for box_cell in su.cells_in_box(box):
 
-                    row = cell_containers[box_cell].data["cell_row"]
+                    row = cell_containers[box_cell].data["row"]
                     row_cells = su.cells_in_row(row)
-                    row_values = sc.values_in_cells(row_cells,cell_containers)
+                    row_values = values_in_cells(row_cells,cell_containers)
 
-                    col = cell_containers[box_cell].data["cell_col"]
+                    col = cell_containers[box_cell].data["col"]
                     col_cells = su.cells_in_col(col)
-                    col_values = sc.values_in_cells(col_cells,cell_containers)
+                    col_values = values_in_cells(col_cells,cell_containers)
 
                     if can_be_count <= 1:
-                        cell_current_value = cell_containers[box_cell].data["cell_current_value"]
+                        cell_current_value = cell_containers[box_cell].data["current_value"]
             
                         print ('3b box_can_be box, row, col ', box, row, needs, can_be_count,  cell_current_value)
 
@@ -433,7 +429,7 @@ if __name__ == "__main__":
                                    box, row, col, needs, can_be_count,  cell_current_value)
 
                             col_cells = su.cells_in_col(col)
-                            col_values = sc.values_in_cells(col_cells,cell_containers)
+                            col_values = values_in_cells(col_cells,cell_containers)
                             cannot_reason = ''
                             if needs in col_values or needs in row_values:
                                 can_be = False
@@ -452,8 +448,8 @@ if __name__ == "__main__":
                 if can_be_count == 1:
                     cells_set.append([row, can_be_col, needs, can_be_cell])
                     cell_containers[can_be_cell].content = ft.Text(needs)
-                    cell_containers[can_be_cell].data["cell_current_value"] = needs
-                    cell_containers[can_be_cell].data["cell_value_source"] = 'box_can_be'
+                    cell_containers[can_be_cell].data["current_value"] = needs
+                    cell_containers[can_be_cell].data["value_source"] = 'box_can_be'
                     cell_containers[can_be_cell].content.bgcolor="orange"
                     page.update()
                     print ('6a box_can_be ==>', row, col, needs, can_be_count)
@@ -472,10 +468,10 @@ if __name__ == "__main__":
             return cells_set
 
         def cell_can_be(cell,cell_containers):
-            row = cell_containers[cell].data["cell_row"]
-            col = cell_containers[cell].data["cell_col"]
-            box = cell_containers[cell].data["cell_box"]
-            value = cell_containers[cell].data["cell_current_value"]
+            row = cell_containers[cell].data["row"]
+            col = cell_containers[cell].data["col"]
+            box = cell_containers[cell].data["box"]
+            value = cell_containers[cell].data["current_value"]
             print ('cell_can_be', row, col, box, cell, value)
 
             cells_set=[]
@@ -484,19 +480,19 @@ if __name__ == "__main__":
                 return cells_set, cell_can_be_values
 
             cell_can_be_values = su.sudoku_values()
-            row_values = sc.values_in_cells(su.cells_in_row(row),cell_containers)
+            row_values = values_in_cells(su.cells_in_row(row),cell_containers)
             for try_value in row_values:
-                if try_value in sc.values_in_cells(su.cells_in_row(row),cell_containers):
+                if try_value in values_in_cells(su.cells_in_row(row),cell_containers):
                     if try_value in cell_can_be_values:
                         cell_can_be_values.remove(try_value)
-            col_values = sc.values_in_cells(su.cells_in_col(col),cell_containers)
+            col_values = values_in_cells(su.cells_in_col(col),cell_containers)
             for try_value in col_values:
-                if try_value in sc.values_in_cells(su.cells_in_col(col),cell_containers):
+                if try_value in values_in_cells(su.cells_in_col(col),cell_containers):
                     if try_value in cell_can_be_values:
                         cell_can_be_values.remove(try_value)
-            box_values = sc.values_in_cells(su.cells_in_box(box),cell_containers)
+            box_values = values_in_cells(su.cells_in_box(box),cell_containers)
             for try_value in box_values:
-                if try_value in sc.values_in_cells(su.cells_in_box(box),cell_containers):
+                if try_value in values_in_cells(su.cells_in_box(box),cell_containers):
                     if try_value in cell_can_be_values:
                         cell_can_be_values.remove(try_value)
             print("cell_can_be", cell_can_be_values)
@@ -504,9 +500,9 @@ if __name__ == "__main__":
             if len(cell_can_be_values) == 1:
                 cells_set.append([row, col, cell_can_be_values[0], cell])
                 cell_containers[cell].content = ft.Text(cell_can_be_values[0])
-                cell_containers[cell].data["cell_current_value"] = cell_can_be_values[0]
-                cell_containers[cell].data["cell_value_source"] = 'cell_can_be'
-                cell_containers[cell].data["cell_show_can_be"] = ''
+                cell_containers[cell].data["current_value"] = cell_can_be_values[0]
+                cell_containers[cell].data["value_source"] = 'cell_can_be'
+                cell_containers[cell].data["show_can_be"] = ''
                 cell_containers[cell].content.bgcolor="blue"
                 page.update()
                 print ('cell_can_be ==>', row, col, cell_can_be_values)
@@ -515,9 +511,9 @@ if __name__ == "__main__":
             elif len(cell_can_be_values) > 1:
                 show_can_be = ''.join(cell_can_be_values)
                 cell_containers[cell].content = ft.Text(show_can_be)
-                cell_containers[cell].data["cell_current_value"] = "__"
-                cell_containers[cell].data["cell_value_source"] = 'cell_can_be'
-                cell_containers[cell].data["cell_show_can_be"] = show_can_be
+                cell_containers[cell].data["current_value"] = "__"
+                cell_containers[cell].data["value_source"] = 'cell_can_be'
+                cell_containers[cell].data["show_can_be"] = show_can_be
                 cell_containers[cell].content.bgcolor="red"
                 page.update()
                 print ('cell_can_be ==>', row, col, cell_can_be_values)
@@ -525,15 +521,11 @@ if __name__ == "__main__":
                 pass
             pass
 
-        def click_test(e):
+        def click_setup(e):
             global cell_containers
             global next_cell_value
-            next_cell_value = "4"
+            next_cell_value = "3"
             click_init(e)
-            all_row_can_be(cell_containers)
-            all_col_can_be(cell_containers)
-            all_box_can_be(cell_containers)
-
             all_row_can_be(cell_containers)
             all_col_can_be(cell_containers)
             all_box_can_be(cell_containers)
@@ -548,16 +540,16 @@ if __name__ == "__main__":
             global cell_containers
             global next_cell_value
             global try_new_value
-
-            if next_cell_value == "1":
+            
+            if next_cell_value == "1": ## solves with all4 6 times
                 init_values = '...65....' + '.96..14..' + '...9..3.1' \
                             + '..5..7.9.' + '.1......6' + '2..1...3.' \
                             + '5..71.6..' + '.....45..' + '.8.2.....'
-            elif next_cell_value == "2":
+            elif next_cell_value == "2": ## maybe damaged -- does not get far
                 init_values = '81.4...5.' + '......9..' + '92.7...18' \
                             + '5..9.....' + '.92...57.' + '.....4..6' \
                             + '26...8.45' + '..7......' + '.8...5.63'
-            elif next_cell_value == "3":
+            elif next_cell_value == "3": ## col 9 167+167+67 > elim 167 9,9 = 2
                 init_values = '..43...9.' + '...6..1..' + '......7..' \
                             + '..8.6....' + '1.....6.8' + '.238.....' \
                             + '.9...6.2.' + '.852.3.1.' + '...4....5'
@@ -579,8 +571,8 @@ if __name__ == "__main__":
                 if text_new_value == '.': text_new_value = '__'
 
                 cell_containers[cell_index].content = ft.Text(text_new_value)
-                cell_containers[cell_index].data["cell_current_value"] = text_new_value
-                cell_containers[cell_index].data["cell_value_source"] = 'init'
+                cell_containers[cell_index].data["current_value"] = text_new_value
+                cell_containers[cell_index].data["value_source"] = 'init'
                 cell_containers[cell_index].bgcolor="green"
 
                 page.update()
@@ -601,14 +593,14 @@ if __name__ == "__main__":
 						height=50,
 						bgcolor="blue",
 						ink=False,
-						data= {"cell_index": cell_index,
-								"cell_row": row,
-								"cell_col": col,
-								"cell_box": box,
-								"cell_current_value": '__',
-                                "cell_bgcolor": "blue",
-                                "cell_highlighted": False,
-								"cell_value_source": ''},
+						data= {"index": cell_index,
+								"row": row,
+								"col": col,
+								"box": box,
+								"current_value": '__',
+                                "bgcolor": "blue",
+                                "highlighted": False,
+								"value_source": ''},
 						on_click=cell_clicked,
 						)
 
@@ -744,19 +736,12 @@ if __name__ == "__main__":
 	        	ft.Row(
 	        		controls=[
 	        			ft.ElevatedButton(text='Init',on_click=click_init),
-	        			ft.ElevatedButton(text='Test',on_click=click_test),
+	        			ft.ElevatedButton(text='Setup',on_click=click_setup),
 	            		]
 	                ),
                 )    
 
         sudoku_grid()
-
-
-        ##click_init(1)
-        ##click_row_can_be(3)
-
-    #if __name__ == '__main__':
-        #unittest.main()
 
     ft.app(target=main)
     ##ft.app(target=main,view=ft.WEB_BROWSER)
