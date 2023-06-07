@@ -506,6 +506,7 @@ if __name__ == "__main__":
                 cell_containers[cell].content = ft.Text(cell_can_be_values[0])
                 cell_containers[cell].data["cell_current_value"] = cell_can_be_values[0]
                 cell_containers[cell].data["cell_value_source"] = 'cell_can_be'
+                cell_containers[cell].data["cell_show_can_be"] = ''
                 cell_containers[cell].content.bgcolor="blue"
                 page.update()
                 print ('cell_can_be ==>', row, col, cell_can_be_values)
@@ -516,6 +517,7 @@ if __name__ == "__main__":
                 cell_containers[cell].content = ft.Text(show_can_be)
                 cell_containers[cell].data["cell_current_value"] = "__"
                 cell_containers[cell].data["cell_value_source"] = 'cell_can_be'
+                cell_containers[cell].data["cell_show_can_be"] = show_can_be
                 cell_containers[cell].content.bgcolor="red"
                 page.update()
                 print ('cell_can_be ==>', row, col, cell_can_be_values)
@@ -531,12 +533,15 @@ if __name__ == "__main__":
             all_row_can_be(cell_containers)
             all_col_can_be(cell_containers)
             all_box_can_be(cell_containers)
+
             all_row_can_be(cell_containers)
             all_col_can_be(cell_containers)
             all_box_can_be(cell_containers)
+
             all_row_can_be(cell_containers)
             all_col_can_be(cell_containers)
             all_box_can_be(cell_containers)
+
             all_cell_can_be(cell_containers)
 
         def click_init(e):
