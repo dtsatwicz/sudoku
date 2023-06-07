@@ -15,7 +15,7 @@ if __name__ == "__main__":
 
         page.title="Sudoku"
         page.window_height=500
-        page.window_width=320
+        page.window_width=360
         text_action_to_take = 'No Action Set'
 
         class TestSudoku(unittest.TestCase):
@@ -216,10 +216,15 @@ if __name__ == "__main__":
         def all4(cell_containers):
             global next_cell_value
             next_cell_value = ""
+            page.update()
             all_row_can_be(cell_containers)
+            page.update()
             all_col_can_be(cell_containers)
+            page.update()
             all_box_can_be(cell_containers)
+            page.update()
             all_cell_can_be(cell_containers)
+            page.update()
 
         def row_can_be(row,cell_containers):
 
@@ -521,7 +526,7 @@ if __name__ == "__main__":
         def click_test(e):
             global cell_containers
             global next_cell_value
-            next_cell_value = "1"
+            next_cell_value = "4"
             click_init(e)
             all_row_can_be(cell_containers)
             all_col_can_be(cell_containers)
@@ -529,18 +534,17 @@ if __name__ == "__main__":
             all_row_can_be(cell_containers)
             all_col_can_be(cell_containers)
             all_box_can_be(cell_containers)
+            all_row_can_be(cell_containers)
+            all_col_can_be(cell_containers)
+            all_box_can_be(cell_containers)
+            all_cell_can_be(cell_containers)
 
         def click_init(e):
             global cell_containers
             global next_cell_value
             global try_new_value
 
-            if next_cell_value in ["0","__"]:
-                init_values = '.........' + '.........' + '.........' \
-                            + '.........' + '.........' + '.........' \
-                            + '.........' + '.........' + '.........'
-
-            elif next_cell_value == "1":
+            if next_cell_value == "1":
                 init_values = '...65....' + '.96..14..' + '...9..3.1' \
                             + '..5..7.9.' + '.1......6' + '2..1...3.' \
                             + '5..71.6..' + '.....45..' + '.8.2.....'
@@ -548,6 +552,19 @@ if __name__ == "__main__":
                 init_values = '81.4...5.' + '......9..' + '92.7...18' \
                             + '5..9.....' + '.92...57.' + '.....4..6' \
                             + '26...8.45' + '..7......' + '.8...5.63'
+            elif next_cell_value == "3":
+                init_values = '..43...9.' + '...6..1..' + '......7..' \
+                            + '..8.6....' + '1.....6.8' + '.238.....' \
+                            + '.9...6.2.' + '.852.3.1.' + '...4....5'
+            elif next_cell_value == "4":
+                init_values = '.73..9...' + '.4..1....' + '9..5....8' \
+                            + '...4...2.' + '....3..5.' + '7.625....' \
+                            + '6...8..9.' + '..4..21..' + '...9..34.'
+            else:
+                init_values = '.........' + '.........' + '.........' \
+                            + '.........' + '.........' + '.........' \
+                            + '.........' + '.........' + '.........'
+
 
             print ("click_init" )
 
@@ -575,8 +592,8 @@ if __name__ == "__main__":
                     box = su.box_of(row,col)
                     c = ft.Container(
 						content=ft.Text("__"),
-						width=30,
-						height=40,
+						width=35,
+						height=50,
 						bgcolor="blue",
 						ink=False,
 						data= {"cell_index": cell_index,
@@ -599,7 +616,7 @@ if __name__ == "__main__":
 
                 if row == 1 :
                     page.add(ft.Divider(height=3,thickness=3,color='black'))
-                page.add(ft.Row(this_row,spacing=1,expand=True))
+                page.add(ft.Row(this_row,spacing=1,height=50,expand=True))
                 if row in (3,6,9):
                     page.add(ft.Divider(height=3,thickness=3,color='black'))
 
@@ -737,3 +754,4 @@ if __name__ == "__main__":
         #unittest.main()
 
     ft.app(target=main)
+    ##ft.app(target=main,view=ft.WEB_BROWSER)

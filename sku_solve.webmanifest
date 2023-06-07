@@ -1,0 +1,14 @@
+{
+  "name": "Sku Solver",
+  "short_name": "Sudoku",
+  "display_mode": "standalone",
+  "display-mode": "standalone",
+  "id": "DavesSudokuSolver1"
+  "icons": [
+    {
+      "src": "sku_solver.py",
+      "sizes": "512x512"
+    }
+  ]
+}
+
